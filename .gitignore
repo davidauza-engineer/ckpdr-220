@@ -37,3 +37,6 @@ yarn-debug.log*
 
 # IDE related files
 .idea
+
+# Unneeded test files
+spec/examples.txt
