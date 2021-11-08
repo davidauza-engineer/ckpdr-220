@@ -70,4 +70,20 @@ RSpec.describe 'RetentionEmails', type: :request do
       it { expect(flash[:notice]).to match(/Something went wrong!*/) }
     end
   end
+
+  describe 'POST /download_csv' do
+    let(:request) { post rentention_emails_download_csv_path, params: { date_from: yesterday.to_s, date_to: today.to_s } }
+
+    it 'returns a successful status' do
+      request
+      is_expected.to have_http_status(:ok)
+    end
+
+    it 'calls Users::SingleRecipe::ExportToCsvJob' do
+      expect_any_instance_of(Users::SingleRecipe::ExportToCsvJob)
+        .to receive(:perform)
+        .with(date_from: yesterday.to_s, date_to: today.to_s)
+      request
+    end
+  end
 end
