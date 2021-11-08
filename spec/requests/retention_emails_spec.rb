@@ -41,29 +41,5 @@ RSpec.describe 'RetentionEmails', type: :request do
 
       it { expect(assigns(:users)).not_to be_nil }
     end
-
-    context 'when date_from is sent with a bad format' do
-      let(:request) do
-        get new_retention_emails_path, params: { date_from: 'yesterday', date_to: today }
-      end
-
-      it { is_expected.to have_http_status(:bad_request) }
-    end
-
-    context 'when date_to is sent with a bad format' do
-      let(:request) do
-        get new_retention_emails_path, params: { date_from: yesterday, date_to: 'today' }
-      end
-
-      it { is_expected.to have_http_status(:bad_request) }
-    end
-
-    context 'when both date_from and date_to params are sent with a bad format' do
-      let(:request) do
-        get new_retention_emails_path, params: { date_from: 'yesterday', date_to: 'today' }
-      end
-
-      it { is_expected.to have_http_status(:bad_request) }
-    end
   end
 end

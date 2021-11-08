@@ -9,8 +9,6 @@ class RetentionEmailsController < ApplicationController
     if date_from.present? && date_to.present?
       @users = User.single_recipe_authors(date_from: Date.parse(date_from), date_to: Date.parse(date_to))
     end
-  rescue ArgumentError
-    invalid_date_response
   end
 
   def create
@@ -57,13 +55,5 @@ class RetentionEmailsController < ApplicationController
 
   def retention_email_params
     params.permit(:body, :date_from, :date_to)
-  end
-
-  def invalid_date_response
-    render json: {
-      errors: [
-        'Invalid date.'
-      ]
-    }, status: :bad_request
   end
 end
