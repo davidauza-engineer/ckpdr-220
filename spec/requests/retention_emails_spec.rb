@@ -80,8 +80,8 @@ RSpec.describe 'RetentionEmails', type: :request do
     end
 
     it 'calls Users::SingleRecipe::ExportToCsvJob' do
-      expect_any_instance_of(Users::SingleRecipe::ExportToCsvJob)
-        .to receive(:perform)
+      expect(Users::SingleRecipe::ExportToCsvJob)
+        .to receive(:perform_later)
         .with(date_from: yesterday.to_s, date_to: today.to_s)
       request
     end
