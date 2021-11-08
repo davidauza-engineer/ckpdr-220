@@ -3,18 +3,87 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  let(:users) do
+    [
+      described_class.create,
+      described_class.create,
+      described_class.create
+    ]
+  end
+  let(:current_year) { 11.months.ago }
+  let(:last_year) { 14.months.ago }
+  let(:recipes) do
+    [
+      Recipe.create(user_id: users[0].id, published_at: current_year),
+      Recipe.create(user_id: users[1].id, published_at: last_year),
+      Recipe.create(user_id: users[2].id, published_at: current_year),
+      Recipe.create(user_id: users[2].id, published_at: current_year)
+    ]
+  end
+
   describe 'associations' do
     it { is_expected.to have_many(:recipes).dependent(:destroy) }
   end
 
-  describe 'scopes' do
-    describe '#recent' do
-      subject { described_class.recent }
+  describe '#recent scope' do
+    subject { described_class.recent }
 
-      let!(:user_one) { described_class.create }
-      let!(:user_two) { described_class.create }
+    before { users }
 
-      it { is_expected.to match_array([user_two, user_one]) }
+    it { is_expected.to match_array([users[2], users[1], users[0]]) }
+  end
+
+  describe '#single_recipe_authors scope' do
+    before { recipes }
+
+    context 'when no options are passed' do
+      subject { described_class.single_recipe_authors }
+
+      it { is_expected.to match_array([users[0]]) }
+    end
+
+    context 'when only the date_from option is passed' do
+      subject { described_class.single_recipe_authors(date_from: 6.months.ago) }
+
+      it { is_expected.to match_array([]) }
+    end
+
+    context 'when only the date_to option is passed' do
+      subject { described_class.single_recipe_authors(date_to: 6.months.ago) }
+
+      it { is_expected.to match_array([users[0]]) }
+    end
+
+    context 'when only the page option is passed' do
+      subject { described_class.single_recipe_authors(page: 2) }
+
+      it { is_expected.to match_array([]) }
+    end
+
+    context 'when all the options are passed' do
+      subject do
+        described_class.single_recipe_authors(date_from: 2.years.ago, date_to: 10.months.ago, page: 1)
+      end
+
+      it { is_expected.to match_array([users[1], users[0]]) }
+    end
+
+    context 'with a single matching recipe' do
+      subject do
+        described_class.single_recipe_authors(date_from: 2.years.ago, date_to: 10.months.ago, page: 1)
+      end
+
+      let(:recipes) do
+        [
+          Recipe.create(user_id: users[0].id, published_at: current_year),
+          Recipe.create(user_id: users[0].id, published_at: current_year),
+          Recipe.create(user_id: users[1].id, published_at: last_year),
+          Recipe.create(user_id: users[2].id, published_at: current_year),
+          Recipe.create(user_id: users[2].id, published_at: current_year)
+        ]
+      end
+
+      it { is_expected.to match_array([users[1]]) }
     end
   end
 end
