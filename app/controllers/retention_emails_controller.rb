@@ -2,26 +2,24 @@
 
 class RetentionEmailsController < ApplicationController
 
+  def index
+    @emails = RetentionEmail.all
+  end
+
   def new
     @email = RetentionEmail.new
-    date_from = params[:date_from]
-    date_to = params[:date_to]
-    if date_from.present? && date_to.present?
-      @users = User.single_recipe_authors(date_from: Date.parse(date_from), date_to: Date.parse(date_to))
-    end
+    @users = Users::SingleRecipe::Getter.run!(date_from: params[:date_from], date_to: params[:date_to])
   end
 
   def create
-    @email = RetentionEmail.new(retention_email_params)
+    valid_params = retention_email_params
+    @email = RetentionEmail.new(valid_params)
 
-    users = get_users
-    recipients = []
-    users.each do |user|
-      recipients << user.email
-    end
-
-    if @email.save && send_mail(recipients)
-      redirect_to retention_emails_path, notice: "Emails Sent Successfully!"
+    if @email.save
+      Email::Retention::Sender.run!(date_from: params[:date_from], date_to: params[:date_to], body: valid_params[:body])
+      redirect_to retention_emails_url, notice: 'Emails will be sent shortly!'
+    else
+      redirect_to retention_emails_url, notice: 'Something went wrong!'
     end
   end
 
@@ -42,18 +40,12 @@ class RetentionEmailsController < ApplicationController
     end
   end
 
-  def send_mail(recipients)
-    recipients.each do |r|
-      UserMailer.bulk_email(r).deliver_later
-    end
-  end
-
   def get_users
     @users = User.recent.joins(:recipes).group("recipes.user_id").where("`published_recipes_count` = 1").
       where("published_at Between ? AND ?", Date.parse(params[:date_from]), Date.parse(params[:date_to])).page(params[:page])
   end
 
   def retention_email_params
-    params.permit(:body, :date_from, :date_to)
+    params.require(:retention_email).permit(:body)
   end
 end

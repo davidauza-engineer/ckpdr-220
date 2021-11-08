@@ -2,7 +2,7 @@
 
 class User < ApplicationRecord
   has_many :recipes, dependent: :destroy
-  scope :recent, -> { order('created_at DESC') }
+  scope :recent, -> { order('users.created_at DESC') }
   scope :single_recipe_authors, lambda { |date_from: 1.year.ago, date_to: Time.current, page: nil|
                                   joins(:recipes)
                                     .where('recipes.published_at BETWEEN ? AND ?', date_from, date_to)
@@ -11,4 +11,7 @@ class User < ApplicationRecord
                                     .recent
                                     .page(page)
                                 }
+  EMAIL_REGEXP = /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/.freeze
+  validates :email, format: { with: EMAIL_REGEXP, message: 'Only allows valid email addresses.' },
+                    length: { minimum: 5, max: 255 }, uniqueness: true
 end

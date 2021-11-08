@@ -2,5 +2,5 @@
 
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  resource :retention_emails, only: [:new]
+  resources :retention_emails, only: %i[new create index]
 end

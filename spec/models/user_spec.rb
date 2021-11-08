@@ -5,9 +5,9 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
   let(:users) do
     [
-      described_class.create,
-      described_class.create,
-      described_class.create
+      described_class.create(email: 'email1@email.com'),
+      described_class.create(email: 'email2@email.com'),
+      described_class.create(email: 'email3@email.com')
     ]
   end
   let(:current_year) { 11.months.ago }
@@ -23,6 +23,13 @@ RSpec.describe User, type: :model do
 
   describe 'associations' do
     it { is_expected.to have_many(:recipes).dependent(:destroy) }
+  end
+
+  describe 'validations' do
+    it { is_expected.to allow_value('test@email.com').for(:email) }
+    it { is_expected.not_to allow_value('test@email').for(:email) }
+    it { is_expected.to validate_length_of(:email).is_at_least(5) }
+    it { is_expected.to validate_uniqueness_of(:email) }
   end
 
   describe '#recent scope' do
