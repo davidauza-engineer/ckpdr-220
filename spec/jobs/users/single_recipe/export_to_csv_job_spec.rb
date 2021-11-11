@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Users::SingleRecipe::ExportToCsvJob, type: :job do
   include ActiveJob::TestHelper
-  let(:today) {  Date.current.to_s }
+  let(:today) { Date.current.to_s }
   let(:yesterday) { 1.day.ago.to_s }
 
   describe '#perform_later' do

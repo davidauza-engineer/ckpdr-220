@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe "Csvs", type: :request do
+RSpec.describe 'Csvs', type: :request do
   describe 'POST /download_csv' do
     subject { response }
 
