@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class RetentionEmailsController < ApplicationController
-
   def index
     @emails = RetentionEmail.all
   end
@@ -23,16 +22,9 @@ class RetentionEmailsController < ApplicationController
     end
   end
 
-  def download_csv
-    send_data(
-      Users::SingleRecipe::ExportToCsvJob.perform_later(date_from: params[:date_from], date_to: params[:date_to]),
-      filename: "author-retention-users-#{Time.zone.today}.csv"
-    )
-  end
-
   private
 
-  def retention_email_params
-    params.require(:retention_email).permit(:body)
-  end
+    def retention_email_params
+      params.require(:retention_email).permit(:body)
+    end
 end
