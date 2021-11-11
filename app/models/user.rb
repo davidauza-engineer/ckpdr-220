@@ -11,7 +11,5 @@ class User < ApplicationRecord
                                     .recent
                                     .page(page)
                                 end)
-  EMAIL_REGEXP = /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/.freeze
-  validates :email, format: { with: EMAIL_REGEXP, message: 'Only allows valid email addresses.' },
-                    length: { minimum: 5, max: 255 }, uniqueness: true
+  validates :email, length: { minimum: 5, max: 255 }, uniqueness: true, email: true
 end
