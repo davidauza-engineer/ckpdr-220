@@ -8,7 +8,7 @@ module Email
       string :body
 
       def execute
-        recipients = Users::SingleRecipe::Getter.run!(date_from: date_from, date_to: date_to)&.pluck(:email)
+        recipients = Users::SingleRecipe::Getter.run!(date_from: date_from, date_to: date_to).pluck(:email)
         UserMailer.bulk_email(recipients, body)
       end
     end

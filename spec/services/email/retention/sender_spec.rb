@@ -34,11 +34,6 @@ RSpec.describe Email::Retention::Sender do
         Recipe.create(user_id: user.id, published_at: Date.current - 12.hours)
       end
 
-      it 'calls the Users::SingleRecipe::Getter service correctly' do
-        expect(Users::SingleRecipe::Getter).to receive(:run!).with(date_from: yesterday, date_to: current_date)
-        subject
-      end
-
       it 'calls the bulk_email UserMailer class function' do
         expect(UserMailer).to receive(:bulk_email).with([], body)
         subject

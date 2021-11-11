@@ -2,8 +2,8 @@
 
 class UserMailer < ApplicationMailer
   def self.bulk_email(recipients, body)
-    recipients&.each do |recipient|
-      retention_email(recipient, body)&.deliver_later
+    recipients.each do |recipient|
+      retention_email(recipient, body).deliver_later
     end
   end
 

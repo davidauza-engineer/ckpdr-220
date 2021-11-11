@@ -3,16 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe UserMailer, type: :mailer do
-  describe '#self.bulk_email' do
-    subject { described_class.bulk_email(['test@test.com', 'test2@test.com'], 'text') }
-
-    it 'calls retention_email twice' do
-      expect(described_class).to receive(:retention_email).exactly(:twice)
-      subject
-    end
-  end
-
-  describe 'retention_email' do
+  describe '#retention_email' do
     context 'with correct arguments' do
       let(:mail) { described_class.retention_email('test@test.com', 'test') }
 
