@@ -2,13 +2,17 @@
 
 module Email
   module Retention
-    class Sender < ActiveInteraction::Base
-      string :date_from
-      string :date_to
-      string :body
+    class Sender
+      attr_reader :date_from, :date_to, :body
 
-      def execute
-        recipients = Users::SingleRecipe::Getter.run!(date_from: date_from, date_to: date_to).pluck(:email)
+      def initialize(date_from:, date_to:, body:)
+        @date_from = date_from
+        @date_to = date_to
+        @body = body
+      end
+
+      def call
+        recipients = Users::SingleRecipe::Getter.new(date_from: date_from, date_to: date_to).call.pluck(:email)
         UserMailer.bulk_email(recipients, body)
       end
     end

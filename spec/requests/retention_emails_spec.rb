@@ -53,9 +53,7 @@ RSpec.describe 'RetentionEmails', type: :request do
       it { expect { subject }.to change(RetentionEmail, :count).by(1) }
 
       it 'calls the Email::Retention::Sender service' do
-        expect(Email::Retention::Sender)
-          .to receive(:run!)
-          .with(date_from: yesterday.to_s, date_to: today.to_s, body: params[:retention_email][:body])
+        expect_any_instance_of(Email::Retention::Sender).to receive(:call)
         subject
       end
     end

@@ -18,13 +18,13 @@ RSpec.describe Users::SingleRecipe::ExportToCsvJob, type: :job do
       end
 
       it 'calls the Users::SingleRecipe::Getter service' do
-        allow(Users::SingleRecipe::Getter).to receive(:run!).and_return([])
-        expect(Users::SingleRecipe::Getter).to receive(:run!).with(date_from: yesterday, date_to: today)
+        allow_any_instance_of(Users::SingleRecipe::Getter).to receive(:call).and_return([])
+        expect_any_instance_of(Users::SingleRecipe::Getter).to receive(:call)
         perform_enqueued_jobs { subject }
       end
 
       it 'calls the CsvFiles::Generator service' do
-        expect(CsvFiles::Generator).to receive(:run!).with(items: [], attributes: described_class::ATTRIBUTES)
+        expect_any_instance_of(CsvFiles::Generator).to receive(:call)
         perform_enqueued_jobs { subject }
       end
     end

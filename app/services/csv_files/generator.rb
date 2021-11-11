@@ -3,11 +3,15 @@
 require 'csv'
 
 module CsvFiles
-  class Generator < ActiveInteraction::Base
-    array :items
-    array :attributes
+  class Generator
+    attr_reader :items, :attributes
 
-    def execute
+    def initialize(items:, attributes:)
+      @items = items
+      @attributes = attributes
+    end
+
+    def call
       ::CSV.generate(headers: true) do |csv|
         csv << attributes
         items.each do |item|

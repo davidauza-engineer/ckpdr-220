@@ -7,7 +7,7 @@ class RetentionEmailsController < ApplicationController
 
   def new
     @email = RetentionEmail.new
-    @users = Users::SingleRecipe::Getter.run!(date_from: params[:date_from], date_to: params[:date_to])
+    @users = Users::SingleRecipe::Getter.new(date_from: params[:date_from], date_to: params[:date_to]).call
   end
 
   def create
@@ -15,7 +15,7 @@ class RetentionEmailsController < ApplicationController
     @email = RetentionEmail.new(valid_params)
 
     if @email.save
-      Email::Retention::Sender.run!(date_from: params[:date_from], date_to: params[:date_to], body: valid_params[:body])
+      Email::Retention::Sender.new(date_from: params[:date_from], date_to: params[:date_to], body: valid_params[:body]).call
       redirect_to retention_emails_url, notice: 'Emails will be sent shortly!'
     else
       redirect_to retention_emails_url, notice: 'Something went wrong!'

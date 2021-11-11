@@ -32,8 +32,6 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'kaminari'
 
-gem 'active_interaction', '~> 4.0'
-
 gem 'sidekiq'
 
 group :development, :test do

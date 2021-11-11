@@ -7,27 +7,9 @@ RSpec.describe Email::Retention::Sender do
   let(:current_date) { Date.current.to_s }
   let(:body) { '' }
 
-  describe '#run!' do
-    context 'when the date_from param is not sent' do
-      subject { described_class.run!(date_to: current_date, body: body) }
-
-      it { expect { subject }.to raise_error ActiveInteraction::InvalidInteractionError }
-    end
-
-    context 'when the date_to param is not sent' do
-      subject { described_class.run!(date_from: current_date, body: body) }
-
-      it { expect { subject }.to raise_error ActiveInteraction::InvalidInteractionError }
-    end
-
-    context 'when the body param is not sent' do
-      subject { described_class.run!(date_from: current_date, date_to: current_date) }
-
-      it { expect { subject }.to raise_error ActiveInteraction::InvalidInteractionError }
-    end
-
+  describe '#call' do
     context 'when valid params are sent' do
-      subject { described_class.run!(date_from: yesterday, date_to: current_date, body: body) }
+      subject { described_class.new(date_from: yesterday, date_to: current_date, body: body).call }
 
       before do
         user = User.create
@@ -38,12 +20,6 @@ RSpec.describe Email::Retention::Sender do
         expect(UserMailer).to receive(:bulk_email).with([], body)
         subject
       end
-    end
-
-    context 'when not valid params are sent' do
-      subject { described_class.run!(date_from: Date.parse(yesterday), date_to: current_date, body: body) }
-
-      it { expect { subject }.to raise_error ActiveInteraction::InvalidInteractionError }
     end
   end
 end
